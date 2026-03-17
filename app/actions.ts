@@ -52,3 +52,8 @@ export async function listVideos() {
         return [];
     }
 }
+
+export async function formatVttTime(timestamp: string) {
+    return timestamp.split('.')[0];
+}
+
