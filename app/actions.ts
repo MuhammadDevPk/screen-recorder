@@ -40,3 +40,15 @@ export async function getAssetIdFromUpload(uploadId: string) {
 
     return { status: 'waiting' };
 }
+
+export async function listVideos() {
+    try {
+        const assets = await mux.video.assets.list({
+            limit: 25,
+        });
+        return assets.data;
+    } catch (e) {
+        console.error('Error listing videos:', e);
+        return [];
+    }
+}
