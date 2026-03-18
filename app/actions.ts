@@ -53,7 +53,55 @@ export async function listVideos() {
     }
 }
 
-export async function formatVttTime(timestamp: string) {
+function formatVttTime(timestamp: string) {
     return timestamp.split('.')[0];
 }
 
+export async function getAssetStatus(playbackId: string) {
+    try {
+        const assets = await mux.video.assets.list()
+        const asset = assets.data.find(a =>
+            a.playback_ids?.some(p => p.id === playbackId)
+        );
+
+        if (!asset) return { status: 'errored', transcript: [] };
+
+        let transcript: { time: string, text: string }[] = [];
+        let transcriptStatus = 'preparing';
+
+        if (asset.status === 'ready' && asset.tracks) {
+            const textTrack = asset.tracks.find(
+                t => t.type === 'text' && t.text_type === 'subtitles'
+            );
+
+            if (textTrack && textTrack.status === 'ready') {
+                transcriptStatus = 'ready';
+
+                const vttUrl = `https://stream.mux.com/${playbackId}/text${textTrack.id}.vtt`;
+                const response = await fetch(vttUrl);
+                const vttText = await response.text();
+
+                const blocks = vttText.split('\n\n');
+
+                transcript = blocks.reduce((acc: { time: string; text: string }[], block) => {
+                    const lines = block.split('\n');
+                    if (lines.length >= 2 && lines[1].includes('-->')) {
+                        const time = formatVttTime(lines[1].split('-->')[0]);
+                        const text = lines.slice(2).join('');
+                        if (text.trim()) acc.push({ time, text });
+                    }
+                    return acc;
+                }, []);
+            }
+        }
+
+        return {
+            status: asset.status,
+            transcriptStatus,
+            transcript 
+        };
+
+    } catch (e) {
+        return { status: 'errored', transcriptStatus: 'errored', transcript: [] };
+    }
+}
