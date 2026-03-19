@@ -15,4 +15,85 @@ export default function ScreenRecorder() {
     const screenStreamRef = useRef<MediaStream | null>(null);
     const micStreamRef = useRef<MediaStream | null>(null);
     const liveVideoRef = useRef<HTMLVideoElement | null>(null);
+
+    const router = useRouter();
+
+    const startRecording = async () => {
+        try {
+            // Step1: Capture the screen
+            const screenStream = await navigator.mediaDevices.getDisplayMedia({
+                video: true,
+                audio: false, // system audio false
+            });
+
+            // Step2: Capture the microphone
+            const micStream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    sampleRate: 44100,
+                },
+                video: false,
+            });
+
+            // Step3: Store References for cleanup
+            screenStreamRef.current = screenStream;
+            micStreamRef.current = micStream;
+
+            // Step4: Merge the streams
+            const combinedStream = new MediaStream([
+                ...screenStream.getVideoTracks(), //Get the video part
+                ...micStream.getAudioTracks(), // Get the audio part
+            ]);
+
+            // Step5: Show live preview
+            if (liveVideoRef.current) {
+                liveVideoRef.current.srcObject = combinedStream;
+            };
+
+            // Step6: Set up the recorder
+            const mediaRecorder = new MediaRecorder(combinedStream, {
+                mimeType: 'video/webm; codecs=vp9',
+            });
+
+            mediaRecorderRef.current = mediaRecorder;
+            chunksRef.current = [];
+
+            // Step7: Collect chunks as the're recorded
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) chunksRef.current.push(event.data);
+            };
+
+            // Step8: Handle recording completion
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(chunksRef.current, { type: 'video/webm' });
+                setMediaBlob(blob);
+
+                if (liveVideoRef.current) {
+                    liveVideoRef.current.srcObject = null;
+                }
+
+                // Critical: Stop all tracks
+                screenStreamRef.current?.getTracks().forEach(t => t.stop());
+                micStreamRef.current?.getTracks().forEach(t => t.stop());
+            };
+
+            // Step9: Start recording
+            mediaRecorder.start();
+            setIsRecording(true);
+
+            // Step10: Handle native "stop sharing" button
+            screenStream.getVideoTracks()[0].onended = stopRecording;
+
+        } catch (err) {
+            console.error('Error starting recording:', err);
+        }
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current && isRecording) {
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+        }
+    }
 }
