@@ -90,10 +90,10 @@ export default function ScreenRecorder() {
         }
     };
 
-    const stopRecording = () => {
-        if (mediaRecorderRef.current && isRecording) {
-            mediaRecorderRef.current.stop();
-            setIsRecording(false);
-        }
-    }
+    // const stopRecording = () => {
+    //     if (mediaRecorderRef.current && isRecording) {
+    //         mediaRecorderRef.current.stop();
+    //         setIsRecording(false);
+    //     }
+    // }
 }
