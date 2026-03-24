@@ -96,4 +96,37 @@ export default function ScreenRecorder() {
             setIsRecording(false);
         }
     }
+
+    const handleUpload = async () => {
+        if (!mediaBlob) return;
+
+        setIsUploading(true);
+
+        try {
+            // Step1: Get a singed upload url from our server
+            const uploadConfig = await createUploadUrl();
+
+            // Step2: Upload directly to Mux (not through our server!)
+            await fetch(uploadConfig.url, {
+                method: 'PUT',
+                body: mediaBlob,
+            });
+
+            // Step3: Poll untill processing completes
+            while (true) {
+                const result = await getAssetIdFromUpload(uploadConfig.id);
+
+                if (result.playbackId) {
+                    router.push(`/video/${result.playbackId}`);
+                    break;
+                }
+
+                await new Promise(r => setTimeout(r, 1000));
+            }
+        } catch (err) {
+            console.error('Upload failed:', err);
+            setIsUploading(false);
+        }
+    }
+
 }
