@@ -150,7 +150,7 @@ export default function ScreenRecorder() {
             {/* Recording Ready State */}
             {!isRecording && mediaBlob && (
                 <div className="text-emerald-400 flex flex-col items-center">
-                <Video className="w-12 h-12 mb-2" />
+                <video className="w-12 h-12 mb-2" />
                 <span>Recording Ready</span>
                 </div>
             )}
