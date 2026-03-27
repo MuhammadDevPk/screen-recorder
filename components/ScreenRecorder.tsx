@@ -190,6 +190,15 @@ export default function ScreenRecorder() {
                 <StopCircle className="w-5 h-5" /> Stop Recording
                 </button>
             )}
+
+            {isRecording && (
+                <button 
+                onClick={stopRecording} 
+                className="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium flex justify-center items-center gap-2"
+                >
+                <StopCircle className="w-5 h-5" /> Stop Recording
+                </button>
+            )}
     
             {mediaBlob && (
                 <button 
