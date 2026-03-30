@@ -32,4 +32,11 @@ export default function VideoStatusPoller({
     }, [id, isVideoReady, router]);
 
     if (isVideoReady) return null;
+
+    return (
+        <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 bg-slate-900">
+            <Loader2 className="w-8 h-8 mb-4 animate-spin text-blue-500" />
+            <p>Processing Video...</p>
+        </div>
+    );
 }
