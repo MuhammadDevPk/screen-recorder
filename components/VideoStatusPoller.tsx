@@ -28,7 +28,7 @@ export default function VideoStatusPoller({
         };
 
         const interval = setInterval(checkStatus, 3000);
-        return () => clearInterval(interval);  
+        return () => clearInterval(interval);  // only runns when component unmounts/stop rendering, not when id or isVideoReady changes, to avoid multiple intervals running at the same time
     }, [id, isVideoReady, router]);
 
     if (isVideoReady) return null;
