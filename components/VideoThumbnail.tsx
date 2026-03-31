@@ -18,5 +18,20 @@ export default function VideoThumbnail({ playbackId}: { playbackId: string }) {
         );
     }
 
-    
+    return (
+        <div
+            className="w-full h-full relative"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            <Image 
+                src={isHovered ? giftUrl : posterUrl}
+                alt="Video thumbnail"
+                fill
+                unoptimized
+                onError={() => setHasError(true)}
+                className={`object-cover transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-90'}`}
+            />
+        </div>
+    );
 }
