@@ -147,3 +147,8 @@ export async function generateVideoSummary(playbackId: string) {
         return null;
     }
 }
+
+async function getCurrentUser() {
+    const cookieStore = await cookies();
+    return cookieStore.get('user')?.value || null;
+}
