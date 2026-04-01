@@ -105,3 +105,32 @@ export async function getAssetStatus(playbackId: string) {
         return { status: 'errored', transcriptStatus: 'errored', transcript: [] };
     }
 }
+
+export async function generateVideoSummary(playbackId: string) {
+    try {
+        const assets = await mux.video.assets.list({ limit: 100 });
+        const asset = assets?.data.find(a => 
+            a.playback_ids?.some(p => p.id === playbackId)
+        );
+
+        if (!asset) throw new Error('Asset not found'); 
+
+        // Import dynamically to avoid issues with module resolution
+        const { getSummaryAndTags } = await import('@mux/ai/workflows');
+
+        // Generate summary using Mux AI
+        // This uses the auto-generated transcript under the hood
+        const result = await getSummaryAndTags(asset.id,{
+            tone: 'professional',
+        });
+
+        return {
+            title: result.title,
+            summary: result.description,
+            tags: result.tags,
+        };
+    } catch (error) {
+        console.error('Error generating summary:', error);
+        return null;
+    }
+}
