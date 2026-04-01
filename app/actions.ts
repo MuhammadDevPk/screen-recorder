@@ -13,7 +13,7 @@ const mux = new Mux({
 export async function createUploadUrl() {
     const upload = await mux.video.uploads.create({
         new_asset_settings: {
-            playback_policy: ['public'],
+            playback_policy: ['signed'],
             video_quality: 'plus',
             mp4_support: 'standard',
             input: [
@@ -151,4 +151,30 @@ export async function generateVideoSummary(playbackId: string) {
 async function getCurrentUser() {
     const cookieStore = await cookies();
     return cookieStore.get('user')?.value || null;
+}
+
+export async function getSignedPlaybackToken(playbackId: string) {
+    const user = await getCurrentUser();
+
+    if (!user) throw new Error('Unauthorized');
+
+    // Decode the base64 private key
+    const privateKey = Buffer.from(
+        process.env.MUX_SIGNING_KEY_PRIVATE!,
+        'base64'
+    ).toString('ascii');
+
+    // Create a signed JWT
+    const token = jwt.sign(
+        {
+            sub: playbackId,
+            aud: 'v',
+            exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour expiration
+            kid: process.env.MUX_SIGNING_KEY_ID,
+        },
+        privateKey,
+        { algorithm: 'RS256' }
+    );
+
+    return token;
 }
