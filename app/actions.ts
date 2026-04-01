@@ -19,6 +19,17 @@ export async function createUploadUrl() {
                     generated_subtitles: [
                         {language_code: 'en', name: 'English (Auto)'}
                     ]
+                },
+                {
+                    url: 'https://media.licdn.com/dms/image/v2/D4E03AQGNOX6bZ-Kd2w/profile-displayphoto-shrink_800_800/B4EZSYNO6xGgAc-/0/1737720393993?e=1776902400&v=beta&t=mjIPBzfw4nVxYBeZ5N9EGnQswyL4Pt6rr6f6bf_xTzM',
+                    overlay_settings: {
+                        vertical_align: 'top',
+                        vertical_margin: '20px',
+                        horizontal_align: 'right',
+                        horizontal_margin: '20px',
+                        width: '150px',
+                        opacity: '80%',
+                    }
                 }
             ]
         },
