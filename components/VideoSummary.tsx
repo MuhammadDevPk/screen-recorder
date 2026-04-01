@@ -49,5 +49,25 @@ export default function VideoSummary({ playbackId }: { playbackId: string }) {
     );
   }
 
-
+  return (
+    <button
+        onClick={handleGenerate}
+        disabled={isGenerating}
+        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 text-white rounded-lg font-medium transition"
+    >
+        {isGenerating ? (
+            <>
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Analyzing Video...
+            </>
+        ) : error ? (
+            'Try Again'
+        ) : (
+            <>
+            <Sparkles className="w-4 h-4" />
+            Generate AI Summary
+            </>
+        )}
+    </button>
+  );
 }
