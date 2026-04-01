@@ -10,3 +10,44 @@ interface SummaryData {
     tags: string[];
 }
 
+export default function VideoSummary({ playbackId }: { playbackId: string }) {
+    const [summary, setSummary] = useState<SummaryData | null>(null);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [error, setError] = useState(false);
+
+    const handleGenerate = async () => {
+        setIsGenerating(true);
+        setError(false);
+
+        const result = await generateVideoSummary(playbackId);
+
+        if (result) {
+            setSummary(result);
+        } else {
+            setError(true);
+        }
+
+        setIsGenerating(false);
+    };
+
+  if (summary) {
+    return (
+        <div className="bg-slate-800 p-6 rounded-xl border border-slate-700">
+            <h3 className="text-lg font-bold text-white mb-2">{summary.title}</h3>
+            <p className="text-slate-300 text-sm leading-relaxed mb-4">{summary.summary}</p>
+            <div className="flex flex-wrap gap-2">
+            {summary.tags.map((tag) => (
+                <span 
+                key={tag} 
+                className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-xs font-medium"
+                >
+                #{tag}
+                </span>
+            ))}
+            </div>
+        </div>
+    );
+  }
+
+
+}
