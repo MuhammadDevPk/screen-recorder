@@ -4,6 +4,11 @@ import { LayoutGrid, Video } from 'lucide-react';
 import { cookies } from 'next/headers';
 import SimpleAuth from '@/components/SimpleAuth';
 
+async function getCurrentUser() {
+    const cookieStore = await cookies();
+    return cookieStore.get('user')?.value || null;
+}
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 relative">
