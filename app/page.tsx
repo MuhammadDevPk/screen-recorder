@@ -9,10 +9,17 @@ async function getCurrentUser() {
     return cookieStore.get('user')?.value || null;
 }
 
-export default function Home() {
+export default async function Home() {
+  const currentUser = await getCurrentUser();
+
   return (
     <main className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 relative">
       
+      {/* Auth UI in top left */}
+      <div className="absolute top-6 left-6 z-20">
+        <SimpleAuth currentUser={currentUser} />
+      </div>
+
       {/* Navigation to Dashboard */}
       <div className="absolute top-6 right-6 z-20">
         <Link 
