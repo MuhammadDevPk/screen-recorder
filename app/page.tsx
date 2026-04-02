@@ -1,6 +1,8 @@
 import ScreenRecorder from '@/components/ScreenRecorder';
 import Link from 'next/link';
 import { LayoutGrid, Video } from 'lucide-react';
+import { cookies } from 'next/headers';
+import SimpleAuth from '@/components/SimpleAuth';
 
 export default function Home() {
   return (
