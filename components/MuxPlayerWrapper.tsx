@@ -5,12 +5,18 @@ import MuxPlayer from '@mux/mux-player-react';
 interface MuxPlayerWrapperProps {
     playbackId: string;
     title?: string;
+    token?: string;
 }
 
-export default function MuxPlayerWrapper({ playbackId, title }: MuxPlayerWrapperProps) {
+export default function MuxPlayerWrapper({ playbackId, title, token }: MuxPlayerWrapperProps) {
     return (
         <MuxPlayer
         playbackId={playbackId} 
+        tokens={token ? {
+            playback: token,
+            thumbnail: token,
+            storyboard: token,
+        } : undefined}
         metadata={{
             video_title: title || 'Screen Recording'
         }}
